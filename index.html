@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruchulu Junction — Andhra & Telangana Drive-Thru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Mukta:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="logo display">Ruchulu <span>Junction</span><span class="tel">రుచుల జంక్షన్</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="themeToggle" title="Toggle day/night mode">🌙</button>
+      <button class="cart-btn" id="openCartBtn">🛺 <span class="txt">Cart</span> <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+  </div>
+  <div class="toran"></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>Andhra flavor. <span>Drive-thru fast.</span></h1>
+      <p>Real Telugu home-style cooking — Guntur chilli, gongura tang, and dum biryani — ordered from your car and ready when you pull up.</p>
+      <div class="hero-actions">
+        <a href="menu.html" class="btn btn-primary">Browse Full Menu</a>
+        <a href="about.html" class="btn btn-outline">Our Story</a>
+      </div>
+      <div class="badge-strip">
+        <div class="b">🌶️ Guntur-level spice, your choice</div>
+        <div class="b">🥬 Veg & non-veg both ways</div>
+        <div class="b">🛺 Pickup slots every 10 min</div>
+      </div>
+    </div>
+    <div class="plate">🍛</div>
+  </section>
+
+  <h2 class="section-title">🗺️ Explore by Category</h2>
+  <p class="section-sub">Six sections, one drive-thru window — from tiffins to Andhra thalis.</p>
+  <div class="cat-grid" id="catGrid"></div>
+
+  <h2 class="section-title">⭐ Crowd Favorites</h2>
+  <p class="section-sub">The dishes our regulars order lane after lane.</p>
+  <div class="menu-grid" id="featuredGrid"></div>
+</main>
+
+<button class="fab-cart" id="fabCart">🛺 View Cart · <span id="fabTotal" class="mono">₹0.00</span></button>
+
+<!-- Cart Drawer -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><h2>Your Order</h2><button class="close-x" id="closeCart">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-summary">
+    <div class="sum-row"><span>Subtotal</span><span class="mono" id="sumSubtotal">₹0.00</span></div>
+    <div class="sum-row"><span>GST (5%)</span><span class="mono" id="sumGst">₹0.00</span></div>
+    <div class="sum-row"><span>Packaging</span><span class="mono" id="sumPackaging">₹0.00</span></div>
+    <div class="sum-row total"><span>Total</span><span class="mono" id="sumTotal">₹0.00</span></div>
+    <button class="big-btn" style="margin:14px 0 0; width:100%;" id="goCheckout">Proceed to Checkout →</button>
+  </div>
+</aside>
+
+<!-- Customize Modal -->
+<div class="overlay" id="customizeOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="title-row">
+        <div class="modal-thumb" id="custThumb"></div>
+        <div><h2 id="custTitle">Item</h2><div class="telugu-name" id="custTelugu"></div></div>
+      </div>
+      <button class="close-x" id="custClose">✕</button>
+    </div>
+    <div class="modal-body" id="custBody"></div>
+    <div class="modal-foot">
+      <div class="qty-stepper">
+        <button class="qty-btn" id="custMinus">−</button>
+        <span class="qty-val" id="custQty">1</span>
+        <button class="qty-btn" id="custPlus">+</button>
+      </div>
+      <button class="big-btn" id="custAdd">Add · <span id="custTotal" class="mono">₹0.00</span></button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 Ruchulu Junction · Andhra & Telangana drive-thru kitchen</div>
+  <div>Open daily · 11:00 AM – 11:00 PM · Pickup lane only</div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/images.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/customize.js"></script>
+<script>
+  document.getElementById('catGrid').innerHTML = CATEGORIES.map(c => `
+    <a class="cat-card" href="menu.html?cat=${c.id}">
+      <div class="em">${c.em}</div>
+      <div class="name">${c.name}</div>
+    </a>`).join('');
+
+  const featured = MENU.filter(i => i.tags.includes('bestseller')).concat(
+    MENU.filter(i => !i.tags.includes('bestseller'))
+  ).slice(0, 4);
+
+  document.getElementById('featuredGrid').innerHTML = featured.map(i => `
+    <div class="card">
+      <div class="card-top">
+        <div class="card-emoji" data-food-img="${i.id}"></div>
+        <div class="tag-row">
+          ${i.tags.includes('bestseller')?'<span class="tag bestseller">BESTSELLER</span>':''}
+          ${i.tags.includes('spicy')?'<span class="tag spicy">SPICY</span>':''}
+          ${i.tags.includes('veg')?'<span class="tag veg">VEG</span>':''}
+        </div>
+      </div>
+      <h3>${i.name}</h3>
+      <div class="telugu-name">${i.teluguName}</div>
+      <p>${i.desc}</p>
+      <div class="card-bottom">
+        <span class="price mono">₹${i.price}</span>
+        <button class="add-btn" data-id="${i.id}">${i.optionGroups ? 'Customize' : 'Add +'}</button>
+      </div>
+    </div>`).join('');
+
+  document.querySelectorAll('#featuredGrid .add-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> openCustomize(btn.dataset.id));
+  });
+
+  initFoodImages(featured);
+</script>
+</body>
+</html>

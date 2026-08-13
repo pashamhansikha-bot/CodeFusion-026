@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Order — Ruchulu Junction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Mukta:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="logo display">Ruchulu <span>Junction</span><span class="tel">రుచుల జంక్షన్</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="themeToggle" title="Toggle day/night mode">🌙</button>
+      <button class="cart-btn" id="openCartBtn">🛺 <span class="txt">Cart</span> <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+  </div>
+  <div class="toran"></div>
+</header>
+
+<main>
+  <div class="panel" style="max-width:620px; margin:20px auto;">
+    <div class="order-num">
+      <div class="k">Order Number</div>
+      <div class="v" id="orderNumVal">#0000</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-lane">
+        <div class="progress-fill" id="progressFill"></div>
+        <div class="car-marker" id="carMarker">🛺</div>
+      </div>
+      <div class="steps-row" id="stepsRow"></div>
+    </div>
+    <div id="statusLine" style="text-align:center; font-weight:700; color:var(--leaf); margin:6px 0 20px; font-size:14.5px;"></div>
+    <div class="receipt" id="receiptBox"></div>
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <a href="menu.html" class="btn btn-outline" style="flex:1; text-align:center;">Order Again</a>
+      <a href="index.html" class="btn btn-primary" style="flex:1; text-align:center;">Back Home</a>
+    </div>
+  </div>
+</main>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><h2>Your Order</h2><button class="close-x" id="closeCart">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-summary">
+    <div class="sum-row"><span>Subtotal</span><span class="mono" id="sumSubtotal">₹0.00</span></div>
+    <div class="sum-row"><span>GST (5%)</span><span class="mono" id="sumGst">₹0.00</span></div>
+    <div class="sum-row"><span>Packaging</span><span class="mono" id="sumPackaging">₹0.00</span></div>
+    <div class="sum-row total"><span>Total</span><span class="mono" id="sumTotal">₹0.00</span></div>
+    <button class="big-btn" style="margin:14px 0 0; width:100%;" id="goCheckout">Proceed to Checkout →</button>
+  </div>
+</aside>
+
+<footer>
+  <div>© 2026 Ruchulu Junction · Andhra & Telangana drive-thru kitchen</div>
+  <div>Open daily · 11:00 AM – 11:00 PM · Pickup lane only</div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/images.js"></script>
+<script src="js/cart.js"></script>
+<script>
+  const order = JSON.parse(localStorage.getItem(LAST_ORDER_KEY) || 'null');
+  if(!order){ window.location.href = 'menu.html'; }
+
+  document.getElementById('orderNumVal').textContent = '#' + order.number;
+
+  const meta = (ci) => (ci.optionSummary && ci.optionSummary.length ? ci.optionSummary.join(', ') : 'Regular');
+  document.getElementById('receiptBox').innerHTML = `
+    <div class="r-row"><span>Name</span><span>${order.name}</span></div>
+    <div class="r-row"><span>Type</span><span>${order.type==='drive'?'Drive-Thru Pickup':'Store Takeaway'}</span></div>
+    ${order.type==='drive' && order.vehicle ? `<div class="r-row"><span>Vehicle</span><span>${order.vehicle}</span></div>` : ''}
+    <div class="r-row"><span>Pickup</span><span>${order.slot}</span></div>
+    <div class="r-row"><span>Payment</span><span>${order.pay==='cash'?'Cash on Pickup':order.pay==='upi'?'UPI':'Card'}</span></div>
+    <div style="border-top:1px dashed var(--line); margin:8px 0;"></div>
+    ${order.items.map(ci => `<div class="r-row"><span>${ci.name} ×${ci.qty} <span style="opacity:.7;">(${meta(ci)})</span></span><span>${formatINR(ci.unitPrice*ci.qty)}</span></div>`).join('')}
+    <div style="border-top:1px dashed var(--line); margin:8px 0;"></div>
+    <div class="r-row"><span>Subtotal</span><span>${formatINR(order.totals.subtotal)}</span></div>
+    <div class="r-row"><span>GST</span><span>${formatINR(order.totals.gst)}</span></div>
+    <div class="r-row"><span>Packaging</span><span>${formatINR(order.totals.packaging)}</span></div>
+    <div class="r-row" style="font-weight:700; border-top:1px dashed var(--line); margin-top:6px; padding-top:6px;"><span>Total</span><span>${formatINR(order.totals.total)}</span></div>
+    ${order.notes ? `<div class="r-row" style="margin-top:6px;"><span>Note</span><span>${order.notes}</span></div>` : ''}
+  `;
+
+  const STEPS = ['Order Received','Preparing','Ready for Pickup','Picked Up'];
+  const STATUS_LINES = [
+    'Your order has reached the kitchen…',
+    'Chefs are cooking it fresh…',
+    'Hot and packed — head to the pickup lane!',
+    'Order picked up. Ruchi chesara? 😋',
+  ];
+  function renderSteps(activeIdx){
+    document.getElementById('stepsRow').innerHTML = STEPS.map((s,i)=>`
+      <div class="step ${i<=activeIdx?'done':''}"><div class="dot"></div>${s}</div>`).join('');
+    document.getElementById('statusLine').textContent = STATUS_LINES[activeIdx];
+  }
+  const positions = [4, 36, 68, 100];
+  let idx = 0;
+  function step(){
+    renderSteps(idx);
+    document.getElementById('progressFill').style.width = positions[idx] + '%';
+    document.getElementById('carMarker').style.left = positions[idx] + '%';
+    if(idx < STEPS.length-1){ idx++; setTimeout(step, 1600); }
+  }
+  step();
+</script>
+</body>
+</html>

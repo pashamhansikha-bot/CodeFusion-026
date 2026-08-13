@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Ruchulu Junction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Mukta:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="logo display">Ruchulu <span>Junction</span><span class="tel">రుచుల జంక్షన్</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="themeToggle" title="Toggle day/night mode">🌙</button>
+      <button class="cart-btn" id="openCartBtn">🛺 <span class="txt">Cart</span> <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+  </div>
+  <div class="toran"></div>
+</header>
+
+<main>
+  <h2 class="section-title">🧾 Checkout</h2>
+  <p class="section-sub">Choose how you'll pick up, when, and how you'll pay.</p>
+
+  <div class="checkout-grid">
+    <div>
+      <div class="panel">
+        <h3>Order Type</h3>
+        <div class="toggle-row" id="orderTypeToggle">
+          <button class="toggle-btn active" data-type="drive">🚗 Drive-Thru Pickup</button>
+          <button class="toggle-btn" data-type="walk">🚶 Store Takeaway</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Pickup Slot</h3>
+        <div class="slot-grid" id="slotGrid"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Your Details</h3>
+        <div class="field">
+          <label class="field-label" for="custName">Name for order</label>
+          <input type="text" id="custName" placeholder="e.g. Sravani">
+        </div>
+        <div class="field" id="vehicleGroup">
+          <label class="field-label" for="vehicleDesc">Vehicle description</label>
+          <input type="text" id="vehicleDesc" placeholder="e.g. White Activa, AP 39 XX 1234">
+        </div>
+        <div class="field">
+          <label class="field-label" for="custPhone">Mobile number</label>
+          <input type="tel" id="custPhone" placeholder="e.g. 98765 43210">
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Payment Method</h3>
+        <div class="opt-list" id="paymentList">
+          <div class="opt-row selected" data-pay="cash"><div class="left"><span class="radio-dot"></span>💵 Cash on Pickup</div></div>
+          <div class="opt-row" data-pay="upi"><div class="left"><span class="radio-dot"></span>📲 UPI (GPay / PhonePe / Paytm)</div></div>
+          <div class="opt-row" data-pay="card"><div class="left"><span class="radio-dot"></span>💳 Debit / Credit Card</div></div>
+        </div>
+        <div class="upi-box" id="upiBox" style="display:none;">
+          <div class="qr">▦</div>
+          Scan at the window or pay to UPI ID <strong>ruchulujunction@upi</strong>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Special Instructions</h3>
+        <textarea id="checkoutNotes" placeholder="Anything the kitchen should know…"></textarea>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Order Summary</h3>
+        <div id="checkoutItems" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;"></div>
+        <div class="sum-row"><span>Subtotal</span><span class="mono" id="cSubtotal">₹0.00</span></div>
+        <div class="sum-row"><span>GST (5%)</span><span class="mono" id="cGst">₹0.00</span></div>
+        <div class="sum-row"><span>Packaging</span><span class="mono" id="cPackaging">₹0.00</span></div>
+        <div class="sum-row total"><span>Total</span><span class="mono" id="cTotal">₹0.00</span></div>
+        <button class="big-btn" style="width:100%; margin:16px 0 0;" id="placeOrderBtn">Place Order 🛺</button>
+        <a href="menu.html" style="display:block; text-align:center; margin-top:10px; font-size:13px; color:var(--text-muted); text-decoration:underline;">← Back to menu</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Cart drawer kept for consistency, though checkout page primarily uses the summary panel -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><h2>Your Order</h2><button class="close-x" id="closeCart">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-summary">
+    <div class="sum-row"><span>Subtotal</span><span class="mono" id="sumSubtotal">₹0.00</span></div>
+    <div class="sum-row"><span>GST (5%)</span><span class="mono" id="sumGst">₹0.00</span></div>
+    <div class="sum-row"><span>Packaging</span><span class="mono" id="sumPackaging">₹0.00</span></div>
+    <div class="sum-row total"><span>Total</span><span class="mono" id="sumTotal">₹0.00</span></div>
+    <button class="big-btn" style="margin:14px 0 0; width:100%;" id="goCheckout" disabled>You're already here</button>
+  </div>
+</aside>
+
+<footer>
+  <div>© 2026 Ruchulu Junction · Andhra & Telangana drive-thru kitchen</div>
+  <div>Open daily · 11:00 AM – 11:00 PM · Pickup lane only</div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/images.js"></script>
+<script src="js/cart.js"></script>
+<script>
+  const cart = getCart();
+  if(cart.length === 0){ window.location.href = 'menu.html'; }
+
+  let checkoutState = { type:'drive', slot:null, pay:'cash' };
+
+  function buildSlots(){
+    const slots = [];
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 15 - (now.getMinutes()%10));
+    for(let i=0;i<9;i++){
+      const t = new Date(now.getTime() + i*10*60000);
+      let h = t.getHours(); const m = t.getMinutes().toString().padStart(2,'0');
+      const ampm = h>=12 ? 'PM':'AM'; h = h%12; if(h===0) h=12;
+      slots.push(`${h}:${m} ${ampm}`);
+    }
+    return slots;
+  }
+
+  function renderCheckoutItems(){
+    const c = getCart();
+    document.getElementById('checkoutItems').innerHTML = c.map(ci=>{
+      const meta = ci.optionSummary && ci.optionSummary.length ? ci.optionSummary.join(', ') : 'Regular';
+      return `<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:13px;">
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span class="cart-item-img" style="width:30px; height:30px;" data-food-img="${ci.itemId}"></span>
+          <span>${ci.name} <span class="mono" style="color:var(--text-muted);">×${ci.qty}</span><br><span style="font-size:11px; color:var(--text-muted);">${meta}</span></span>
+        </span>
+        <span class="mono">${formatINR(ci.unitPrice*ci.qty)}</span>
+      </div>`;
+    }).join('');
+    if(typeof initFoodImages === 'function'){
+      const checkoutMenuItems = c.map(ci => MENU.find(m=>m.id===ci.itemId)).filter(Boolean);
+      initFoodImages(checkoutMenuItems);
+    }
+    const { subtotal, gst, packaging, total } = cartTotals(c);
+    document.getElementById('cSubtotal').textContent = formatINR(subtotal);
+    document.getElementById('cGst').textContent = formatINR(gst);
+    document.getElementById('cPackaging').textContent = formatINR(packaging);
+    document.getElementById('cTotal').textContent = formatINR(total);
+  }
+
+  function renderSlots(){
+    const slots = buildSlots();
+    checkoutState.slot = checkoutState.slot || slots[0];
+    document.getElementById('slotGrid').innerHTML = slots.map(s=>`
+      <button class="slot ${checkoutState.slot===s?'selected':''}" data-slot="${s}">${s}</button>`).join('');
+    document.querySelectorAll('.slot').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ checkoutState.slot = btn.dataset.slot; renderSlots(); });
+    });
+  }
+
+  document.getElementById('orderTypeToggle').addEventListener('click', e=>{
+    const btn = e.target.closest('.toggle-btn'); if(!btn) return;
+    checkoutState.type = btn.dataset.type;
+    document.querySelectorAll('#orderTypeToggle .toggle-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    document.getElementById('vehicleGroup').style.display = checkoutState.type==='drive' ? 'block' : 'none';
+  });
+
+  document.getElementById('paymentList').addEventListener('click', e=>{
+    const row = e.target.closest('.opt-row'); if(!row) return;
+    checkoutState.pay = row.dataset.pay;
+    document.querySelectorAll('#paymentList .opt-row').forEach(r=>r.classList.toggle('selected', r===row));
+    document.getElementById('upiBox').style.display = checkoutState.pay==='upi' ? 'block' : 'none';
+  });
+
+  document.getElementById('placeOrderBtn').addEventListener('click', ()=>{
+    const c = getCart();
+    if(c.length===0) return;
+    const name = document.getElementById('custName').value.trim() || 'Guest';
+    const vehicle = document.getElementById('vehicleDesc').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
+    const notes = document.getElementById('checkoutNotes').value.trim();
+    const totals = cartTotals(c);
+
+    let seq = parseInt(localStorage.getItem(ORDER_SEQ_KEY) || '1042');
+    seq++;
+    localStorage.setItem(ORDER_SEQ_KEY, seq);
+
+    const order = {
+      number: seq, name, vehicle, phone, notes,
+      type: checkoutState.type, slot: checkoutState.slot, pay: checkoutState.pay,
+      items: c, totals, placedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(LAST_ORDER_KEY, JSON.stringify(order));
+    saveCart([]);
+    window.location.href = 'track.html';
+  });
+
+  renderSlots();
+  renderCheckoutItems();
+</script>
+</body>
+</html>

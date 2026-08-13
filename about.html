@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Ruchulu Junction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Mukta:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="logo display">Ruchulu <span>Junction</span><span class="tel">రుచుల జంక్షన్</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="themeToggle" title="Toggle day/night mode">🌙</button>
+      <button class="cart-btn" id="openCartBtn">🛺 <span class="txt">Cart</span> <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+  </div>
+  <div class="toran"></div>
+</header>
+
+<main>
+  <div class="about-hero">
+    <h1 style="font-size:34px;">From an Andhra kitchen to your car window.</h1>
+    <p style="color:var(--text-muted); margin-top:10px; max-width:640px; line-height:1.6;">
+      Ruchulu Junction started as a single tiffin stall on the Vijayawada–Guntur highway, run by a family that believed
+      spice, tang, and generous portions shouldn't wait for a sit-down table. Today the recipes are the same — gongura
+      picked and pounded fresh, dum biryani sealed and slow-cooked, chilli ground the Guntur way — just faster to your window.
+    </p>
+  </div>
+
+  <h2 class="section-title">🏮 What Makes Us, Us</h2>
+  <div class="about-grid">
+    <div class="info-card">
+      <div class="em">🌶️</div>
+      <h4>Real Guntur Heat</h4>
+      <p>We source our red chilli powder from Guntur — you choose Mild, Medium, or full Andhra Spicy on every dish that allows it.</p>
+    </div>
+    <div class="info-card">
+      <div class="em">🍃</div>
+      <h4>Gongura, Fresh Daily</h4>
+      <p>Sorrel leaves are cleaned and ground each morning — no bottled paste, ever.</p>
+    </div>
+    <div class="info-card">
+      <div class="em">🛺</div>
+      <h4>Lane-Ready in Minutes</h4>
+      <p>Pick a 10-minute slot at checkout; your order is packed and waiting when you pull into the lane.</p>
+    </div>
+    <div class="info-card">
+      <div class="em">🥬</div>
+      <h4>Veg & Non-Veg, Equal Care</h4>
+      <p>From Gutti Vankaya to Gongura Mutton, both kitchens get the same attention and the same spice bar.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">📍 Visit the Junction</h2>
+  <div class="about-grid">
+    <div class="info-card">
+      <div class="em">🕚</div>
+      <h4>Hours</h4>
+      <p>Open daily, 11:00 AM – 11:00 PM.<br>Pickup lane closes 15 minutes before closing.</p>
+    </div>
+    <div class="info-card">
+      <div class="em">🗺️</div>
+      <h4>Location</h4>
+      <p>NH-16 Service Road, near Kanaka Durga Flyover, Vijayawada, Andhra Pradesh.</p>
+    </div>
+    <div class="info-card">
+      <div class="em">📞</div>
+      <h4>Contact</h4>
+      <p>+91 98765 43210<br>hello@ruchulujunction.example</p>
+    </div>
+  </div>
+</main>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><h2>Your Order</h2><button class="close-x" id="closeCart">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-summary">
+    <div class="sum-row"><span>Subtotal</span><span class="mono" id="sumSubtotal">₹0.00</span></div>
+    <div class="sum-row"><span>GST (5%)</span><span class="mono" id="sumGst">₹0.00</span></div>
+    <div class="sum-row"><span>Packaging</span><span class="mono" id="sumPackaging">₹0.00</span></div>
+    <div class="sum-row total"><span>Total</span><span class="mono" id="sumTotal">₹0.00</span></div>
+    <button class="big-btn" style="margin:14px 0 0; width:100%;" id="goCheckout">Proceed to Checkout →</button>
+  </div>
+</aside>
+
+<footer>
+  <div>© 2026 Ruchulu Junction · Andhra & Telangana drive-thru kitchen</div>
+  <div>Open daily · 11:00 AM – 11:00 PM · Pickup lane only</div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu — Ruchulu Junction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Mukta:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="logo display">Ruchulu <span>Junction</span><span class="tel">రుచుల జంక్షన్</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="about.html">About</a>
+    </nav>
+    <div class="search-wrap" style="max-width:260px;">
+      <span>🔎</span>
+      <input type="text" id="searchInput" placeholder="Search the menu…">
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="themeToggle" title="Toggle day/night mode">🌙</button>
+      <button class="cart-btn" id="openCartBtn">🛺 <span class="txt">Cart</span> <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+  </div>
+  <div class="toran"></div>
+  <nav class="lane-nav">
+    <div class="lane-tabs" id="categoryTabs"></div>
+    <div class="filter-row" id="dietChips"></div>
+  </nav>
+</header>
+
+<main>
+  <h2 class="section-title" id="sectionTitle">Full Menu</h2>
+  <p class="section-sub" id="sectionSub">All the Andhra & Telangana classics, one order away.</p>
+  <div class="menu-grid" id="menuGrid"></div>
+</main>
+
+<button class="fab-cart" id="fabCart">🛺 View Cart · <span id="fabTotal" class="mono">₹0.00</span></button>
+
+<!-- Cart Drawer -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head"><h2>Your Order</h2><button class="close-x" id="closeCart">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-summary">
+    <div class="sum-row"><span>Subtotal</span><span class="mono" id="sumSubtotal">₹0.00</span></div>
+    <div class="sum-row"><span>GST (5%)</span><span class="mono" id="sumGst">₹0.00</span></div>
+    <div class="sum-row"><span>Packaging</span><span class="mono" id="sumPackaging">₹0.00</span></div>
+    <div class="sum-row total"><span>Total</span><span class="mono" id="sumTotal">₹0.00</span></div>
+    <button class="big-btn" style="margin:14px 0 0; width:100%;" id="goCheckout">Proceed to Checkout →</button>
+  </div>
+</aside>
+
+<!-- Customize Modal -->
+<div class="overlay" id="customizeOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="title-row">
+        <div class="modal-thumb" id="custThumb"></div>
+        <div><h2 id="custTitle">Item</h2><div class="telugu-name" id="custTelugu"></div></div>
+      </div>
+      <button class="close-x" id="custClose">✕</button>
+    </div>
+    <div class="modal-body" id="custBody"></div>
+    <div class="modal-foot">
+      <div class="qty-stepper">
+        <button class="qty-btn" id="custMinus">−</button>
+        <span class="qty-val" id="custQty">1</span>
+        <button class="qty-btn" id="custPlus">+</button>
+      </div>
+      <button class="big-btn" id="custAdd">Add · <span id="custTotal" class="mono">₹0.00</span></button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 Ruchulu Junction · Andhra & Telangana drive-thru kitchen</div>
+  <div>Open daily · 11:00 AM – 11:00 PM · Pickup lane only</div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/images.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/customize.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const state = {
+    activeCat: params.get('cat') || 'all',
+    activeDiet: null,
+    search: '',
+  };
+
+  function renderTabs(){
+    const tabWrap = document.getElementById('categoryTabs');
+    const all = [{id:'all', name:'Full Menu', em:'🧾'}, ...CATEGORIES];
+    tabWrap.innerHTML = all.map(c => `
+      <button class="tab ${state.activeCat===c.id?'active':''}" data-cat="${c.id}">${c.em} ${c.name}</button>`).join('');
+    tabWrap.querySelectorAll('.tab').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ state.activeCat = btn.dataset.cat; renderTabs(); renderMenu(); });
+    });
+
+    const dietWrap = document.getElementById('dietChips');
+    const diets = [{id:'veg', label:'🥬 Vegetarian'}, {id:'spicy', label:'🌶️ Spicy'}, {id:'bestseller', label:'⭐ Bestsellers'}];
+    dietWrap.innerHTML = diets.map(d => `
+      <button class="chip ${state.activeDiet===d.id?'active':''}" data-diet="${d.id}">${d.label}</button>`).join('');
+    dietWrap.querySelectorAll('.chip').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state.activeDiet = state.activeDiet === btn.dataset.diet ? null : btn.dataset.diet;
+        renderTabs(); renderMenu();
+      });
+    });
+  }
+
+  document.getElementById('searchInput').addEventListener('input', e=>{
+    state.search = e.target.value.trim().toLowerCase();
+    renderMenu();
+  });
+
+  function renderMenu(){
+    let items = MENU;
+    if(state.activeCat !== 'all') items = items.filter(i=>i.cat===state.activeCat);
+    if(state.activeDiet) items = items.filter(i=>i.tags.includes(state.activeDiet));
+    if(state.search) items = items.filter(i => (i.name+' '+i.teluguName+' '+i.desc).toLowerCase().includes(state.search));
+
+    const titleMap = Object.fromEntries(CATEGORIES.map(c=>[c.id,c.name]));
+    document.getElementById('sectionTitle').textContent = state.activeCat==='all' ? 'Full Menu' : titleMap[state.activeCat];
+
+    const grid = document.getElementById('menuGrid');
+    if(items.length===0){
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><span class="em">🛑</span>No dishes match — try a different search or filter.</div>`;
+      return;
+    }
+    grid.innerHTML = items.map(i => `
+      <div class="card">
+        <div class="card-top">
+          <div class="card-emoji" data-food-img="${i.id}"></div>
+          <div class="tag-row">
+            ${i.tags.includes('bestseller')?'<span class="tag bestseller">BESTSELLER</span>':''}
+            ${i.tags.includes('spicy')?'<span class="tag spicy">SPICY</span>':''}
+            ${i.tags.includes('veg')?'<span class="tag veg">VEG</span>':''}
+          </div>
+        </div>
+        <h3>${i.name}</h3>
+        <div class="telugu-name">${i.teluguName}</div>
+        <p>${i.desc}</p>
+        <div class="card-bottom">
+          <span class="price mono">₹${i.price}</span>
+          <button class="add-btn" data-id="${i.id}">${i.optionGroups ? 'Customize' : 'Add +'}</button>
+        </div>
+      </div>`).join('');
+
+    grid.querySelectorAll('.add-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=> openCustomize(btn.dataset.id));
+    });
+
+    initFoodImages(items);
+  }
+
+  renderTabs();
+  renderMenu();
+</script>
+</body>
+</html>
